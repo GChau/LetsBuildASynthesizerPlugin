@@ -8,14 +8,46 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include <algorithm>
+
+static const int WIDTH = 666;
+static const int HEIGHT = 666;
 
 //==============================================================================
-BasicOscillatorAudioProcessorEditor::BasicOscillatorAudioProcessorEditor (BasicOscillatorAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p)
+BasicOscillatorAudioProcessorEditor::BasicOscillatorAudioProcessorEditor(
+    BasicOscillatorAudioProcessor& p)
+  : AudioProcessorEditor(&p),
+    audioProcessor (p)
 {
-    // Make sure that before the constructor has finished, you've set the
-    // editor's size to whatever you need it to be.
-    setSize (400, 300);
+    setSize(WIDTH, HEIGHT);
+    setResizable(true, true);
+
+    // Set up sliders
+    oscillator_slider_.setSliderStyle(juce::Slider::SliderStyle::LinearBar);
+    oscillator_slider_.setRange(1.f, 666.f, 1.f);
+    oscillator_slider_.setValue(220.f);
+    oscillator_slider_.setTextBoxStyle(
+        juce::Slider::TextBoxBelow,
+        true,
+        WIDTH * 0.5f,
+        32
+    );
+    oscillator_slider_.addListener(this);
+
+    gain_slider_.setSliderStyle(juce::Slider::SliderStyle::Rotary);
+    gain_slider_.setRange(0.f, 1.0f, 0.01f);
+    gain_slider_.setValue(0.01f);
+    gain_slider_.setTextBoxStyle(
+        juce::Slider::TextBoxBelow,
+        true,
+        WIDTH * 0.5f,
+        32
+    );
+    gain_slider_.addListener(this);
+
+    // Add sliders to plugin
+    addAndMakeVisible(oscillator_slider_);
+    addAndMakeVisible(gain_slider_);
 }
 
 BasicOscillatorAudioProcessorEditor::~BasicOscillatorAudioProcessorEditor()
@@ -23,18 +55,59 @@ BasicOscillatorAudioProcessorEditor::~BasicOscillatorAudioProcessorEditor()
 }
 
 //==============================================================================
+
+void BasicOscillatorAudioProcessorEditor::sliderValueChanged(
+    juce::Slider* slider
+) {
+    if (slider == &oscillator_slider_) {
+        audioProcessor.oscillator_.setFrequency(oscillator_slider_.getValue());
+    }
+
+    if (slider == &gain_slider_) {
+        audioProcessor.gain_.setGainLinear(gain_slider_.getValue());
+    }
+
+    // If the slider changes value, repaint
+    repaint();
+}
+
+//==============================================================================
 void BasicOscillatorAudioProcessorEditor::paint (juce::Graphics& g)
 {
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
+    // Background Colour is ratio of the frequency
+    const float freq = oscillator_slider_.getValue();
+    const float ratio = freq / (oscillator_slider_.getMaximum() - oscillator_slider_.getMinimum());
+    const unsigned char ratio_255 = (unsigned char)(ratio * 255.f);
+    unsigned int colour = 0xff00a600;
+    colour |= ((unsigned int)ratio_255 << 16);
+    g.fillAll(juce::Colour(colour));
 
-    g.setColour (juce::Colours::white);
-    g.setFont (15.0f);
-    g.drawFittedText ("Hello World!", getLocalBounds(), juce::Justification::centred, 1);
+    g.setColour(juce::Colour(0xff001eff));
+
+    // Make font stretch or compress if window gets resized
+    const float x_ratio = ((float)getWidth() / WIDTH);
+    const float y_ratio = ((float)getHeight() / HEIGHT);
+    const float min_ratio = std::min(x_ratio, y_ratio);
+
+    const auto font_size = 69.0f * min_ratio;
+    g.setFont(font_size);
+    g.drawFittedText("max 666 oscillation!!", getLocalBounds(), juce::Justification::centredTop, 1);
+    g.drawFittedText("oscillator freq B)", getLocalBounds(), juce::Justification::centredBottom, 1);
 }
 
 void BasicOscillatorAudioProcessorEditor::resized()
 {
-    // This is generally where you'll want to lay out the positions of any
-    // subcomponents in your editor..
+    gain_slider_.setBounds(
+        (float)getWidth() * 0.25f,
+        (float)getHeight() * 0.25f,
+        (float)getWidth() * 0.5f,
+        (float)getHeight() * 0.125f
+    );
+
+    oscillator_slider_.setBounds(
+        (float)getWidth() * 0.25f,
+        (float)getHeight() * 0.75f,
+        (float)getWidth() * 0.5f,
+        (float)getHeight()* 0.125f
+    );
 }

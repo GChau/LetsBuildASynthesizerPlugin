@@ -13,7 +13,8 @@
 //==============================================================================
 /**
 */
-class BasicOscillatorAudioProcessor  : public juce::AudioProcessor
+class BasicOscillatorAudioProcessor
+  : public juce::AudioProcessor
 {
 public:
     //==============================================================================
@@ -53,12 +54,14 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-private:
+public:
     // Sine, Saw and Square
     //juce::dsp::Oscillator<float> oscillator_{ [](float x) { return std::sin(x); } };
     //juce::dsp::Oscillator<float> oscillator_{ [](float x) { return x / juce::MathConstants<float>::pi; }};
-    juce::dsp::Oscillator<float> oscillator_{ [](float x) { return x < 0.0f ? -1.f : 1.f; }};
+    juce::dsp::Oscillator<float> oscillator_{ [](float x) { return x < 0.0f ? -1.f : 1.f; } };
     juce::dsp::Gain<float> gain_;
+
+private:
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BasicOscillatorAudioProcessor)
