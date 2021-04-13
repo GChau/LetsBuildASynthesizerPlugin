@@ -36,6 +36,7 @@ private:
     // access the processor object that created it.
     BasicOscillatorAudioProcessor& audioProcessor;
 
+    juce::Slider active_oscillator_slider_;
     juce::Slider oscillator_slider_;
     juce::Slider gain_slider_;
 

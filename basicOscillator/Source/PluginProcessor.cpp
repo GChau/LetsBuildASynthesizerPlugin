@@ -100,9 +100,19 @@ void BasicOscillatorAudioProcessor::prepareToPlay (double sampleRate, int sample
     spec.sampleRate = sampleRate;
     spec.numChannels = getTotalNumOutputChannels();
 
+    // Sine, Saw and Square
+    oscillators_.insert(std::make_pair(OscillatorType::SINE_E, std::make_shared<juce::dsp::Oscillator<float>>([](float x) { return std::sin(x); })));
+    oscillators_.insert(std::make_pair(OscillatorType::SAW_E, std::make_shared<juce::dsp::Oscillator<float>>([](float x) { return x / juce::MathConstants<float>::pi; })));
+    oscillators_.insert(std::make_pair(OscillatorType::SQUARE_E, std::make_shared<juce::dsp::Oscillator<float>>([](float x) { return x < 0.0f ? -1.f : 1.f; })));
+
+    // Set current 
+    active_oscillator_ = OscillatorType::SINE_E;
+
     // Pass process spec to our dsp
-    oscillator_.prepare(spec);
-    oscillator_.setFrequency(220.f);
+    for (auto& it : oscillators_) {
+        it.second->prepare(spec);
+        it.second->setFrequency(220.f);
+    }
 
     gain_.prepare(spec);
     gain_.setGainLinear(0.01f);
@@ -140,7 +150,7 @@ bool BasicOscillatorAudioProcessor::isBusesLayoutSupported (const BusesLayout& l
 }
 #endif
 
-void BasicOscillatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
+void BasicOscillatorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
@@ -150,12 +160,11 @@ void BasicOscillatorAudioProcessor::processBlock (juce::AudioBuffer<float>& buff
         buffer.clear(i, 0, buffer.getNumSamples());
     }
 
-    // Assign audio block to ossilator
+    // Assign audio block to active occilator
     juce::dsp::AudioBlock<float> audio_block(buffer);
-    oscillator_.process(juce::dsp::ProcessContextReplacing<float>(audio_block));
+    oscillators_[active_oscillator_]->process(juce::dsp::ProcessContextReplacing<float>(audio_block));
 
     gain_.process(juce::dsp::ProcessContextReplacing<float>(audio_block));
-
 }
 
 //==============================================================================

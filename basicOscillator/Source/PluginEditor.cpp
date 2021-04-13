@@ -23,6 +23,17 @@ BasicOscillatorAudioProcessorEditor::BasicOscillatorAudioProcessorEditor(
     setResizable(true, true);
 
     // Set up sliders
+    active_oscillator_slider_.setSliderStyle(juce::Slider::SliderStyle::Rotary);
+    active_oscillator_slider_.setRange(0.0, 2.0, 1.0);
+    active_oscillator_slider_.setValue(0.0);
+    active_oscillator_slider_.setTextBoxStyle(
+        juce::Slider::TextBoxBelow,
+        true,
+        WIDTH * 0.5f,
+        32
+    );
+    active_oscillator_slider_.addListener(this);
+
     oscillator_slider_.setSliderStyle(juce::Slider::SliderStyle::LinearBar);
     oscillator_slider_.setRange(1.f, 666.f, 1.f);
     oscillator_slider_.setValue(220.f);
@@ -46,6 +57,7 @@ BasicOscillatorAudioProcessorEditor::BasicOscillatorAudioProcessorEditor(
     gain_slider_.addListener(this);
 
     // Add sliders to plugin
+    addAndMakeVisible(active_oscillator_slider_);
     addAndMakeVisible(oscillator_slider_);
     addAndMakeVisible(gain_slider_);
 }
@@ -59,8 +71,12 @@ BasicOscillatorAudioProcessorEditor::~BasicOscillatorAudioProcessorEditor()
 void BasicOscillatorAudioProcessorEditor::sliderValueChanged(
     juce::Slider* slider
 ) {
+    if (slider == &active_oscillator_slider_) {
+        audioProcessor.active_oscillator_ = (OscillatorType)((int)active_oscillator_slider_.getValue());
+    }
+
     if (slider == &oscillator_slider_) {
-        audioProcessor.oscillator_.setFrequency(oscillator_slider_.getValue());
+        audioProcessor.oscillators_[audioProcessor.active_oscillator_]->setFrequency(oscillator_slider_.getValue());
     }
 
     if (slider == &gain_slider_) {
@@ -106,8 +122,15 @@ void BasicOscillatorAudioProcessorEditor::resized()
 
     oscillator_slider_.setBounds(
         (float)getWidth() * 0.25f,
-        (float)getHeight() * 0.75f,
+        (float)getHeight() * 0.5f,
         (float)getWidth() * 0.5f,
         (float)getHeight()* 0.125f
+    );
+
+    active_oscillator_slider_.setBounds(
+        (float)getWidth() * 0.25f,
+        (float)getHeight() * 0.65f,
+        (float)getWidth() * 0.5f,
+        (float)getHeight() * 0.125f
     );
 }

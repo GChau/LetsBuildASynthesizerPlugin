@@ -9,6 +9,14 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include <memory>
+#include <unordered_map>
+
+enum class OscillatorType {
+    SINE_E = 0,
+    SAW_E,
+    SQUARE_E
+};
 
 //==============================================================================
 /**
@@ -56,9 +64,8 @@ public:
 
 public:
     // Sine, Saw and Square
-    //juce::dsp::Oscillator<float> oscillator_{ [](float x) { return std::sin(x); } };
-    //juce::dsp::Oscillator<float> oscillator_{ [](float x) { return x / juce::MathConstants<float>::pi; }};
-    juce::dsp::Oscillator<float> oscillator_{ [](float x) { return x < 0.0f ? -1.f : 1.f; } };
+    std::unordered_map<OscillatorType, std::shared_ptr<juce::dsp::Oscillator<float>>> oscillators_;
+    OscillatorType active_oscillator_;
     juce::dsp::Gain<float> gain_;
 
 private:
