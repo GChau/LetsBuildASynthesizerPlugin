@@ -22,5 +22,6 @@ I used Reaper to pick up my VST3 plugin.
 Source: 
 * Download - https://juce.com/get-juce/download
 * Lessons
+    * Part 2 - https://youtu.be/AfrAWH5i-pQ
     * Part 1 - https://youtu.be/nQR-wtzsRhA
     * Part 0 - https://youtu.be/ADG6Rsd3ekg
