@@ -98,6 +98,11 @@ void SynthTapAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlo
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
     synth_.setCurrentPlaybackSampleRate(sampleRate);
+    for (int i = 0; i < synth_.getNumVoices(); i++) {
+        if (auto voice = dynamic_cast<SynthVoice*>(synth_.getVoice(i))) {
+            voice->prepareToPlay(sampleRate, samplesPerBlock, getTotalNumInputChannels());
+        }
+    }
 }
 
 void SynthTapAudioProcessor::releaseResources()
