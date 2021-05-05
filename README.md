@@ -24,6 +24,7 @@ Source:
 * Obscure issue with updating VS to 16.9.4 - https://forum.juce.com/t/ms-visual-studio-16-9-4-compile-failed-after-vs-update/45555
     * Resolution is to just build develop branch of Producer to generate correct project config.
 * Lessons
+    * Part 3 - https://youtu.be/hrfSJXfTCYE
     * Part 2 - https://youtu.be/AfrAWH5i-pQ
     * Part 1 - https://youtu.be/nQR-wtzsRhA
     * Part 0 - https://youtu.be/ADG6Rsd3ekg
