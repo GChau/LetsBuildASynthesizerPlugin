@@ -25,6 +25,8 @@ Source:
     * Resolution is to just build develop branch of Producer to generate correct project config.
 * Lessons
     * Part 3 - https://youtu.be/hrfSJXfTCYE
+        * Juce 6 Tutorial 7 - AudioProcessorValueTreeState - https://youtu.be/nkQPsYOdIrk
+        * Juce 7 Tutorial 8 - AudioProcessorValueTreeState - https://youtu.be/xgoSzXgUPpc
     * Part 2 - https://youtu.be/AfrAWH5i-pQ
     * Part 1 - https://youtu.be/nQR-wtzsRhA
     * Part 0 - https://youtu.be/ADG6Rsd3ekg

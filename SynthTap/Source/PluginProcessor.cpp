@@ -19,7 +19,9 @@ SynthTapAudioProcessor::SynthTapAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                      ),
+         apvts_(*this, nullptr, "Parameters", createParameterLayout())
+
 #endif
 {
     synth_.addSound(new SynthSound());
@@ -179,6 +181,20 @@ void SynthTapAudioProcessor::setStateInformation (const void* data, int sizeInBy
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+}
+
+juce::AudioProcessorValueTreeState::ParameterLayout SynthTapAudioProcessor::createParameterLayout()
+{
+    std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        "GAIN",
+        "Gain",
+        0.0f,
+        1.0f,
+        0.05f
+    ));
+
+    return juce::AudioProcessorValueTreeState::ParameterLayout(params.begin(), params.end());
 }
 
 //==============================================================================
